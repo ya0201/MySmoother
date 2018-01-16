@@ -6,8 +6,6 @@
 #include "MySmoother.pch"
 //#include <string>
 #define INIT_VALUE -273.15  // tekitou
-#define ALPHA_DEFAULT 0.4
-#define GAMMA_DEFAULT 0.5
 
 // Double Exponential Smoothing
 // http://nbviewer.jupyter.org/github/wingcloud/notebooks/blob/master/SmoothingFilter1.ipynb
@@ -25,7 +23,7 @@ protected:
 
 class Smoother1D : public Smoother {
 public:
-    Smoother1D(float alpha = ALPHA_DEFAULT, float gamma = GAMMA_DEFAULT) : Smoother(alpha, gamma) {
+    Smoother1D(float alpha, float gamma) : Smoother(alpha, gamma) {
         last_smoothed_ = last_b_ = INIT_VALUE;
     }
     
@@ -50,7 +48,7 @@ private:
 
 class Smoother2D : public Smoother {
 public:
-    Smoother2D(float alpha = ALPHA_DEFAULT, float gamma = GAMMA_DEFAULT) : Smoother(alpha, gamma) {
+    Smoother2D(float alpha, float gamma) : Smoother(alpha, gamma) {
         x_smoother_ = new Smoother1D(alpha, gamma);
         y_smoother_ = new Smoother1D(alpha, gamma);
     }
@@ -79,7 +77,7 @@ private:
 
 class Smoother3D : public Smoother {
 public:
-    Smoother3D(float alpha = ALPHA_DEFAULT, float gamma = GAMMA_DEFAULT) : Smoother(alpha, gamma) {
+    Smoother3D(float alpha, float gamma) : Smoother(alpha, gamma) {
         x_smoother_ = new Smoother1D(alpha, gamma);
         y_smoother_ = new Smoother1D(alpha, gamma);
         z_smoother_ = new Smoother1D(alpha, gamma);
@@ -112,18 +110,31 @@ private:
     Smoother1D* z_smoother_;
 };
 
-void* getSmoother1D() {
-    auto smoother1d = new Smoother1D();
+void* getSmoother1D(float alpha, float gamma) {
+    auto smoother1d = new Smoother1D(alpha, gamma);
     return static_cast<void*>(smoother1d);
 }
-void* getSmoother2D() {
-    auto smoother2d = new Smoother2D();
+void* getSmoother2D(float alpha, float gamma) {
+    auto smoother2d = new Smoother2D(alpha, gamma);
     return static_cast<void*>(smoother2d);
 }
-void* getSmoother3D() {
-    auto smoother3d = new Smoother3D();
+void* getSmoother3D(float alpha, float gamma) {
+    auto smoother3d = new Smoother3D(alpha, gamma);
     return static_cast<void*>(smoother3d);
 }
+void deleteSmoother1D(void* smoother) {
+    auto smoother1d = static_cast<Smoother1D*>(smoother);
+    delete smoother1d;
+}
+void deleteSmoother2D(void* smoother) {
+    auto smoother2d = static_cast<Smoother2D*>(smoother);
+    delete smoother2d;
+}
+void deleteSmoother3D(void* smoother) {
+    auto smoother3d = static_cast<Smoother3D*>(smoother);
+    delete smoother3d;
+}
+
 float smooth1D(void* smoother, float f) {
     auto smoother1d = static_cast<Smoother1D*>(smoother);
     return smoother1d->smooth(f);

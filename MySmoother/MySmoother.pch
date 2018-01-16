@@ -3,8 +3,8 @@
 //  MySmoother
 //
 
-#ifndef MySmoother_hpp
-#define MySmoother_hpp
+#ifndef MySmoother_pch
+#define MySmoother_pch
 
 #include <stdio.h>
 //#include <string.h>
@@ -21,13 +21,16 @@ typedef struct Vector3 {
 } Vector3;
 
 extern "C" {
-    void* getSmoother1D();
-    void* getSmoother2D();
-    void* getSmoother3D();
+    void* getSmoother1D(float alpha, float gamma);
+    void* getSmoother2D(float alpha, float gamma);
+    void* getSmoother3D(float alpha, float gamma);
+    void deleteSmoother1D(void* smoother);
+    void deleteSmoother2D(void* smoother);
+    void deleteSmoother3D(void* smoother);
     float smooth1D(void* smoother, float f);
     Vector2 smooth2D(void* smoother, Vector2 p);
     Vector3 smooth3D(void* smoother, Vector3 p);
 //    void toString(Vector2 p, char* dest);
 }
 
-#endif /* MySmoother_hpp */
+#endif /* MySmoother_pch */
